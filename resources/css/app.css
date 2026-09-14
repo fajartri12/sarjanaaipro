@@ -1,0 +1,986 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Kelas komponen dipakai awalan `ui-` supaya tidak bentrok dengan kelas
+ * bawaan plugin Flowbite (.btn, .card, .input, .badge, dan sejenisnya).
+ */
+
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Topbar mobile menempel di atas, jadi jangkar # tidak boleh tertutup. */
+    [id] {
+        scroll-margin-top: 5rem;
+    }
+
+    /* Satu cincin fokus untuk seluruh aplikasi, bukan per elemen. */
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible,
+    [tabindex]:focus-visible {
+        @apply outline-none ring-2 ring-blue-600 ring-offset-2 ring-offset-white;
+    }
+
+    summary {
+        @apply cursor-pointer list-none;
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
+    }
+}
+
+@layer components {
+    /* ---------- Permukaan ---------- */
+    /*
+     * Kartu tidak memakai garis pinggir: elevasi bayangan yang memisahkannya
+     * dari latar halaman. Border tetap ada tapi transparan supaya pemanggil
+     * yang sengaja mewarnainya (`border-rose-200`, `border-blue-600`) tetap
+     * bekerja, dan geometri kartu tidak berubah.
+     */
+    .ui-card {
+        @apply rounded-xl border border-transparent bg-white shadow-card;
+    }
+
+    .ui-card-hover {
+        @apply transition duration-200 hover:border-gray-200 hover:shadow-card-md;
+    }
+
+    /*
+     * Tanpa garis pemisah. Kepala kartu pakai `bg-gray-100` supaya tetap
+     * terbaca sebagai pita tersendiri di atas badan putih; `bg-gray-50`
+     * terlalu dekat dengan latar halaman sehingga dulu butuh border.
+     */
+    .ui-card-head {
+        @apply flex flex-wrap items-start justify-between gap-3 bg-gray-100 px-5 py-4;
+    }
+
+    /*
+     * Sudut membulat diberikan ke anak pertama, bukan ke `.ui-card` itu sendiri.
+     * Kalau `.ui-card` yang di-clip, isi yang sengaja keluar batas — misalnya
+     * garis aksen kartu statistik — ikut terpotong. Ini berlaku untuk apa pun
+     * anak pertamanya: kepala kartu, `<summary>`, atau judul biasa.
+     */
+    .ui-card > *:first-child {
+        @apply rounded-t-[11px];
+    }
+
+    /*
+     * Daftar di dalam kartu. Garis antar-baris hanya digambar di tepi atas
+     * baris kedua dan seterusnya, jadi garis tidak pernah menyentuh sudut
+     * membulat kartu di ujung atas maupun bawah.
+     */
+    .ui-card-list > :not([hidden]) ~ :not([hidden]) {
+        @apply relative border-t border-gray-100;
+    }
+
+    .ui-card-body {
+        @apply p-5;
+    }
+
+    .ui-card-title {
+        @apply text-base font-semibold tracking-tight text-gray-900;
+    }
+
+    .ui-card-sub {
+        @apply mt-0.5 text-[13px] leading-relaxed text-gray-500;
+    }
+
+    /* Di atas tint kepala kartu, gray-500 cuma 4.39:1 — kurang dari AA. */
+    .ui-card-head .ui-card-sub {
+        @apply text-gray-600;
+    }
+
+    /* ---------- Tipografi ---------- */
+    /*
+     * Skala teks resmi: 11px (label/meta), 13px (teks UI), 15px (naskah).
+     * Ukuran ad-hoc 10px/12px/14px sudah dikonsolidasikan ke skala ini supaya
+     * tidak ada enam ukuran berbeda yang hanya beda 1px.
+     */
+
+    /* Blok bacaan panjang (hasil AI, naskah, kutipan): batasi lebar supaya
+       baris tidak melelahkan mata, dan beri jarak antarbaris yang lega. */
+    .ui-prose {
+        @apply max-w-[68ch] text-[13px] leading-[1.8] text-gray-700;
+    }
+
+    .ui-prose-tight {
+        @apply max-w-[68ch] leading-relaxed;
+    }
+
+    .ui-eyebrow {
+        @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400;
+    }
+
+    .ui-page-title {
+        @apply text-2xl font-bold tracking-tight text-gray-900;
+    }
+
+    .ui-page-sub {
+        @apply mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-500;
+    }
+
+    /* ---------- Tombol ---------- */
+    .ui-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition duration-150 hover:bg-blue-700 active:bg-blue-800 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    .ui-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition duration-150 hover:border-gray-400 hover:bg-gray-50 active:bg-gray-100 disabled:pointer-events-none disabled:opacity-50;
+    }
+    .ui-btn-save {
+        @apply border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100 active:bg-emerald-200;
+    }
+    .ui-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition duration-150 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    .ui-btn-danger {
+        @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-rose-200 bg-white px-4 py-2.5 text-sm font-medium text-rose-600 shadow-sm transition duration-150 hover:border-rose-300 hover:bg-rose-50 active:bg-rose-100 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    .ui-btn-sm {
+        @apply rounded-lg px-3 py-2 text-[13px];
+    }
+
+    /*
+     * Aksi di dalam sel tabel. Sengaja tanpa bayangan dan berpadding kecil
+     * supaya tidak membuat baris jadi tinggi; dikelompokkan sebagai kelas
+     * agar seluruh tabel memakai ukuran dan warna yang sama persis.
+     */
+    .ui-btn-table {
+        @apply inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-blue-600 transition duration-150 hover:bg-blue-50 hover:text-blue-700;
+    }
+
+    .ui-btn-table-danger {
+        @apply inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-rose-600 transition duration-150 hover:bg-rose-50 hover:text-rose-700;
+    }
+
+    .ui-btn-table-muted {
+        @apply inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 transition duration-150 hover:bg-gray-100 hover:text-gray-900;
+    }
+
+    .ui-btn-xs {
+        @apply gap-1.5 rounded-md px-2.5 py-1.5 text-xs;
+    }
+
+    .ui-btn-block {
+        @apply w-full;
+    }
+
+    /* ---------- Formulir ---------- */
+    .ui-label {
+        @apply block text-[13px] font-medium text-gray-700;
+    }
+
+    .ui-label-sm {
+        @apply block text-xs font-medium text-gray-600;
+    }
+
+    .ui-input {
+        @apply block w-full rounded-lg border-gray-300 text-sm text-gray-900 shadow-sm transition duration-150 placeholder:text-gray-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500;
+    }
+
+    .ui-input-sm {
+        @apply block w-full rounded-lg border-gray-300 text-[13px] text-gray-900 shadow-sm transition duration-150 placeholder:text-gray-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600;
+    }
+
+    .ui-hint {
+        @apply mt-1.5 text-xs leading-relaxed text-gray-500;
+    }
+
+    .ui-error {
+        @apply mt-1.5 text-xs font-medium text-rose-600;
+    }
+
+    /* ---------- Label kecil ---------- */
+    .ui-link {
+        @apply font-medium text-blue-600 underline decoration-blue-300 underline-offset-2 transition hover:decoration-blue-600;
+    }
+
+    /* ---------- Chip / badge status ---------- */
+    .ui-chip {
+        @apply inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold;
+    }
+
+    /* ---------- Teks meta kecil ---------- */
+    .ui-meta {
+        @apply text-[11px] tabular-nums text-gray-400;
+    }
+
+    /* ---------- Navigasi ---------- */
+    .ui-nav-link {
+        @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition duration-150 hover:bg-gray-100 hover:text-gray-900;
+    }
+    .ui-nav-link-active {
+        @apply bg-blue-600 text-white shadow-sm hover:bg-blue-700 hover:text-white;
+    }
+
+    /* ---------- Progres ---------- */
+    .ui-progress {
+        @apply h-1.5 w-full overflow-hidden rounded-full bg-gray-100;
+    }
+
+    .ui-progress-md {
+        @apply h-2;
+    }
+
+    .ui-progress-fill {
+        @apply h-full rounded-full transition-[width] duration-700 ease-out;
+    }
+
+    /* ---------- Progres AI ---------- */
+    /*
+     * Dipakai partials/ai-progress.blade.php. Warna biru ditahan supaya tidak
+     * bersaing dengan aksen lain di halaman; yang bergerak hanya sapuan latar,
+     * jadi bilahnya terbaca hidup tanpa perlu persentase palsu.
+     */
+    .ai-bar {
+        @apply transition-[width] duration-[900ms] ease-out;
+        background-image: linear-gradient(90deg, #2563eb, #93c5fd, #2563eb);
+        background-size: 220% 100%;
+        animation: ai-sweep 1.8s linear infinite;
+    }
+
+    .ai-halo {
+        @apply absolute inset-0 rounded-xl border-2 border-blue-400;
+        animation: ai-halo 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* Titik penanda tahap: pengganti ikon, bukan hiasan. */
+    .ai-dot {
+        @apply h-[7px] w-[7px] rounded-full bg-gray-300;
+    }
+
+    .ai-dot-live {
+        @apply h-[7px] w-[7px] rounded-full bg-blue-600;
+        animation: ai-dot 1.5s ease-in-out infinite;
+    }
+
+    .ai-dot-done {
+        @apply h-[7px] w-[7px] rounded-full bg-emerald-500;
+    }
+
+    /* ---------- Editor naskah ---------- */
+    /*
+     * Toolbar format. Tombolnya sengaja tidak pakai `.ui-btn-*` karena
+     * harus rapat dan tanpa bayangan — area tulis, bukan aksi halaman.
+     */
+    .ui-editor-toolbar {
+        @apply flex flex-wrap items-center gap-0.5 border-b border-gray-100 px-3 py-1.5;
+    }
+
+    .ui-editor-tool {
+        @apply grid h-8 w-8 place-items-center rounded-md text-gray-500 transition duration-150 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200;
+    }
+
+    /* Tombol yang sedang aktif (mis. kursor di dalam teks tebal). */
+    .ui-editor-tool-active {
+        @apply bg-blue-50 text-blue-700;
+    }
+
+    /* Bilah target kata: diisi lewat JS, warnanya berubah per ambang. */
+    .ui-wordbar-fill {
+        @apply h-full rounded-full bg-blue-600 transition-[width] duration-500 ease-out;
+    }
+
+    .ui-wordbar-fill-done {
+        @apply bg-emerald-500;
+    }
+
+    /*
+     * Layar sentuh: tombol kecil dinaikkan ke ~40px supaya jari tidak salah
+     * tekan. Hanya berlaku di mobile supaya desktop tetap rapat.
+     */
+    @media (max-width: 639px) {
+        .ui-editor-tool {
+            height: 2.5rem;
+            width: 2.5rem;
+        }
+
+        .ui-btn-table,
+        .ui-btn-table-danger,
+        .ui-btn-table-muted {
+            padding-block: 0.5rem;
+        }
+
+        .ui-td {
+            padding-inline: 1rem;
+        }
+
+        .ui-th {
+            padding-inline: 1rem;
+        }
+    }
+
+    /* ---------- Tabel dengan komponen Flowbite ---------- */
+    .ui-table-wrap {
+        @apply relative overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-card;
+    }
+
+    .ui-table {
+        @apply w-full text-left text-sm text-gray-500;
+    }
+
+    .ui-thead {
+        @apply border-b border-gray-100 bg-gray-50/90 text-[11px] font-semibold uppercase tracking-[0.06em] text-gray-600;
+    }
+
+    .ui-th {
+        @apply whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-gray-600;
+    }
+
+    .ui-tbody {
+        @apply divide-y divide-gray-100;
+    }
+
+    /* Baris Flowbite: sorot saat hover, dan tetap terlihat saat dicentang. */
+    .ui-tr {
+        @apply bg-white transition-colors hover:bg-gray-50/80 has-[:checked]:bg-blue-50/60;
+    }
+
+    .ui-td {
+        @apply px-6 py-4 text-sm text-gray-700;
+    }
+
+    /* ---------- Keadaan kosong ---------- */
+    .ui-empty {
+        @apply flex flex-col items-center rounded-xl border border-dashed border-gray-300 bg-gray-50/70 px-6 py-12 text-center;
+    }
+
+    /* ---------- Skeleton shimmer ---------- */
+    /*
+     * Pengganti teks "Memuat…" di panel notifikasi / kartu data. Pakai
+     * gradient animasi; tidak butuh JS. Cukup kasih kelas `ui-skeleton` pada
+     * elemen kosong yang lebarnya sudah ditentukan.
+     */
+    .ui-skeleton {
+        @apply relative overflow-hidden rounded-md bg-gray-200;
+    }
+
+    .ui-skeleton::before {
+        content: "";
+        @apply absolute inset-0;
+        background-image: linear-gradient(90deg, transparent, rgb(229 231 235 / 0.6), transparent);
+        animation: ui-shimmer 1.4s ease-in-out infinite;
+    }
+
+    @keyframes ui-shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    /* ---------- Toast ---------- */
+    /*
+     * Pesan singkat (sukses/gagal) muncul dari kanan atas lalu hilang sendiri.
+     * Panel panjang — misalnya hasil AI — tetap mengalir di badan halaman,
+     * jadi kelas ini hanya dipakai untuk pesan satu baris.
+     */
+    .ui-toast {
+        @apply pointer-events-auto flex items-start gap-3 rounded-xl border px-4 py-3 text-[13px] leading-relaxed shadow-card-md;
+        animation: ui-toast-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ui-toast-out {
+        animation: ui-toast-out 0.2s ease-in forwards;
+    }
+
+    @keyframes ui-toast-in {
+        from {
+            opacity: 0;
+            transform: translateX(1rem);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes ui-toast-out {
+        to {
+            opacity: 0;
+            transform: translateX(1rem);
+        }
+    }
+}
+
+/*
+ * ---------- Tema gelap ----------
+ *
+ * Semua tulisannya aditif: mode terang tidak disentuh sama sekali. Kelas
+ * `ui-*` ditimpa langsung, sedangkan utility mentah di view ditimpa lewat
+ * pencocokan nama kelas, jadi view tidak perlu diedit satu per satu.
+ * `color-scheme: dark` membuat kontrol bawaan browser (checkbox, select,
+ * scrollbar) ikut gelap tanpa CSS tambahan.
+ */
+[data-theme='dark'] {
+    color-scheme: dark;
+}
+
+[data-theme='dark'] body {
+    background-color: #111827;
+}
+
+/* `bg-gray-100` dipakai sebagai latar halaman di layout tamu, bukan sebagai
+   isian kecil, jadi halaman itu digelapkan tersendiri. */
+[data-theme='dark'] body.bg-gray-100 {
+    background-color: #111827;
+}
+
+/*
+ * Permukaan, garis, dan teks abu-abu.
+ *
+ * `[class~='...']` mencocokkan satu token utuh, jadi `bg-white` tidak ikut
+ * mengenai `bg-white/90`, dan `hover:bg-gray-50` tidak ikut tertimpa.
+ * Varian hover ditangani sendiri oleh blok di bawahnya.
+ */
+[data-theme='dark'] [class~='bg-white'] {
+    background-color: #1f2937;
+}
+
+[data-theme='dark'] [class~='bg-white/70'],
+[data-theme='dark'] [class~='bg-white/80'],
+[data-theme='dark'] [class~='bg-white/85'],
+[data-theme='dark'] [class~='bg-white/90'] {
+    background-color: rgb(31 41 55 / 0.85);
+}
+
+[data-theme='dark'] [class~='bg-gray-50'],
+[data-theme='dark'] [class~='bg-gray-50/60'],
+[data-theme='dark'] [class~='bg-gray-50/70'],
+[data-theme='dark'] [class~='bg-gray-100/70'] {
+    background-color: #111827;
+}
+
+[data-theme='dark'] [class~='bg-gray-100'] {
+    background-color: #374151;
+}
+
+[data-theme='dark'] [class~='bg-gray-300'] {
+    background-color: #4b5563;
+}
+
+[data-theme='dark'] [class~='border-gray-100'] {
+    border-color: #2b3542;
+}
+
+[data-theme='dark'] [class~='border-gray-200'] {
+    border-color: #374151;
+}
+
+[data-theme='dark'] [class~='border-gray-300'] {
+    border-color: #4b5563;
+}
+
+[data-theme='dark'] .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #2b3542;
+}
+
+[data-theme='dark'] [class~='text-gray-900'],
+[data-theme='dark'] [class~='text-gray-800'] {
+    color: #f3f4f6;
+}
+
+[data-theme='dark'] [class~='text-gray-700'] {
+    color: #d1d5db;
+}
+
+[data-theme='dark'] [class~='text-gray-600'],
+[data-theme='dark'] [class~='text-gray-500'] {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] [class~='text-gray-400'] {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] [class~='text-gray-300'] {
+    color: #d1d5db;
+}
+
+/* Varian hover ikut gelap, bukan menyala putih. */
+[data-theme='dark'] [class*='hover:bg-gray-']:hover,
+[data-theme='dark'] [class*='hover:bg-white']:hover {
+    background-color: #374151;
+}
+
+[data-theme='dark'] [class*='hover:bg-rose-']:hover {
+    background-color: rgb(244 63 94 / 0.18);
+}
+
+[data-theme='dark'] [class*='hover:bg-blue-']:hover {
+    background-color: rgb(28 100 242 / 0.22);
+}
+
+[data-theme='dark'] [class*='hover:border-gray-300']:hover {
+    border-color: #4b5563;
+}
+
+[data-theme='dark'] [class*='hover:text-blue-']:hover {
+    color: #93c5fd;
+}
+
+
+/*
+ * Warna aksen: latar jadi lapisan transparan, teks dinaikkan ke shade -300/-400
+ * supaya kontrasnya tetap lolos di latar gelap.
+ */
+[data-theme='dark'] [class~='bg-blue-50'],
+[data-theme='dark'] [class~='bg-blue-50/60'] {
+    background-color: rgb(28 100 242 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-blue-100'] {
+    background-color: rgb(28 100 242 / 0.28);
+}
+
+[data-theme='dark'] [class~='bg-emerald-50'],
+[data-theme='dark'] [class~='bg-emerald-50/70'] {
+    background-color: rgb(16 185 129 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-emerald-100'] {
+    background-color: rgb(16 185 129 / 0.28);
+}
+
+[data-theme='dark'] [class~='bg-amber-50'] {
+    background-color: rgb(245 158 11 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-amber-100'] {
+    background-color: rgb(245 158 11 / 0.28);
+}
+
+[data-theme='dark'] [class~='bg-rose-50'],
+[data-theme='dark'] [class~='bg-rose-50/50'] {
+    background-color: rgb(244 63 94 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-rose-100'] {
+    background-color: rgb(244 63 94 / 0.28);
+}
+
+[data-theme='dark'] [class~='bg-violet-50'] {
+    background-color: rgb(139 92 246 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-violet-100'] {
+    background-color: rgb(139 92 246 / 0.28);
+}
+
+[data-theme='dark'] [class~='bg-sky-50'] {
+    background-color: rgb(14 165 233 / 0.18);
+}
+
+[data-theme='dark'] [class~='bg-indigo-50'] {
+    background-color: rgb(99 102 241 / 0.18);
+}
+
+/* Kotak centang berlabel: `has-[:checked]:` ditangani terpisah. */
+[data-theme='dark'] [class*='has-[:checked]:border-blue-600']:has(:checked) {
+    border-color: #3f83f8;
+}
+
+[data-theme='dark'] [class*='has-[:checked]:bg-blue-50']:has(:checked) {
+    background-color: rgb(28 100 242 / 0.18);
+}
+
+[data-theme='dark'] [class~='border-emerald-200'],
+[data-theme='dark'] [class~='border-emerald-200/70'] {
+    border-color: rgb(16 185 129 / 0.4);
+}
+
+[data-theme='dark'] [class~='border-amber-200'] {
+    border-color: rgb(245 158 11 / 0.4);
+}
+
+[data-theme='dark'] [class~='border-rose-200'] {
+    border-color: rgb(244 63 94 / 0.4);
+}
+
+[data-theme='dark'] [class~='border-indigo-200'],
+[data-theme='dark'] [class~='border-indigo-200/70'] {
+    border-color: rgb(99 102 241 / 0.4);
+}
+
+[data-theme='dark'] [class~='border-sky-200'] {
+    border-color: rgb(14 165 233 / 0.4);
+}
+
+/* Teks aksen: dinaikkan ke shade yang masih terbaca di latar #1f2937. */
+[data-theme='dark'] [class~='text-blue-600'] {
+    color: #60a5fa;
+}
+
+[data-theme='dark'] [class~='text-blue-700'],
+[data-theme='dark'] [class~='text-blue-800'] {
+    color: #93c5fd;
+}
+
+[data-theme='dark'] [class~='text-emerald-500'],
+[data-theme='dark'] [class~='text-emerald-600'] {
+    color: #34d399;
+}
+
+[data-theme='dark'] [class~='text-emerald-700'],
+[data-theme='dark'] [class~='text-emerald-800'],
+[data-theme='dark'] [class~='text-emerald-900'] {
+    color: #6ee7b7;
+}
+
+[data-theme='dark'] [class~='text-amber-600'] {
+    color: #fbbf24;
+}
+
+[data-theme='dark'] [class~='text-amber-700'],
+[data-theme='dark'] [class~='text-amber-800'],
+[data-theme='dark'] [class~='text-amber-900'],
+[data-theme='dark'] [class~='text-amber-950'] {
+    color: #fcd34d;
+}
+
+[data-theme='dark'] [class~='text-rose-600'] {
+    color: #fb7185;
+}
+
+[data-theme='dark'] [class~='text-rose-700'],
+[data-theme='dark'] [class~='text-rose-800'],
+[data-theme='dark'] [class~='text-rose-900'] {
+    color: #fda4af;
+}
+
+[data-theme='dark'] [class~='text-violet-600'],
+[data-theme='dark'] [class~='text-violet-800'] {
+    color: #c4b5fd;
+}
+
+[data-theme='dark'] [class~='text-sky-600'],
+[data-theme='dark'] [class~='text-sky-900'] {
+    color: #7dd3fc;
+}
+
+[data-theme='dark'] [class~='text-indigo-700'],
+[data-theme='dark'] [class~='text-indigo-900'] {
+    color: #a5b4fc;
+}
+
+/* Cincin fokus: offset putih menyala di latar gelap. */
+[data-theme='dark'] a:focus-visible,
+[data-theme='dark'] button:focus-visible,
+[data-theme='dark'] summary:focus-visible,
+[data-theme='dark'] [tabindex]:focus-visible {
+    --tw-ring-offset-color: #1f2937;
+}
+
+/* Dark mode: toolbar dan wordbar */
+[data-theme='dark'] .ui-editor-toolbar {
+    @apply border-gray-700 bg-gray-800/50;
+}
+
+[data-theme='dark'] .ui-editor-tool {
+    @apply text-gray-400 hover:bg-gray-700/50 hover:text-gray-200;
+}
+
+[data-theme='dark'] .ui-wordbar-fill {
+    background-image: linear-gradient(90deg, #3b82f6, #93c5fd, #3b82f6);
+}
+
+/* Kontrol formulir bawaan plugin forms selalu putih; dipaksa ikut tema. */
+[data-theme='dark'] input:not([type='checkbox']):not([type='radio']):not([type='file']),
+[data-theme='dark'] select,
+[data-theme='dark'] textarea {
+    background-color: #1f2937;
+    color: #f3f4f6;
+}
+
+/* ---------- Komponen ui-* ---------- */
+/* Di latar gelap pemisahan datang dari selisih nilai permukaan, bukan garis. */
+[data-theme='dark'] .ui-card {
+    background-color: #1f2937;
+    border-color: transparent;
+}
+
+[data-theme='dark'] .ui-card-hover:hover {
+    border-color: #4b5563;
+}
+
+[data-theme='dark'] .ui-card-head {
+    background-color: #252f3e;
+}
+
+[data-theme='dark'] .ui-card-title,
+[data-theme='dark'] .ui-page-title {
+    color: #f3f4f6;
+}
+
+[data-theme='dark'] .ui-card-sub,
+[data-theme='dark'] .ui-page-sub,
+[data-theme='dark'] .ui-hint,
+[data-theme='dark'] .ui-nav-link,
+[data-theme='dark'] .ui-btn-ghost {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .ui-eyebrow,
+[data-theme='dark'] .ui-meta,
+[data-theme='dark'] .ui-th {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .ui-table-wrap {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+[data-theme='dark'] .ui-thead {
+    background-color: #252f3e;
+    border-color: #374151;
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .ui-tbody {
+    border-color: #374151;
+}
+
+[data-theme='dark'] .ui-tr {
+    background-color: #1f2937;
+}
+
+[data-theme='dark'] .ui-tr:hover {
+    background-color: #283548;
+}
+
+[data-theme='dark'] .ui-tr:has(:checked) {
+    background-color: #1e293b;
+}
+
+[data-theme='dark'] .ui-btn-secondary {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+
+[data-theme='dark'] .ui-btn-save {
+    background-color: rgb(16 185 129 / 0.15);
+    border-color: rgb(16 185 129 / 0.4);
+    color: #6ee7b7;
+}
+
+[data-theme='dark'] .ui-btn-danger {
+    background-color: #1f2937;
+    border-color: rgb(244 63 94 / 0.4);
+}
+
+[data-theme='dark'] .ui-label {
+    color: #d1d5db;
+}
+
+[data-theme='dark'] .ui-label-sm {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .ui-input,
+[data-theme='dark'] .ui-input-sm {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: #f3f4f6;
+}
+
+[data-theme='dark'] .ui-input::placeholder,
+[data-theme='dark'] .ui-input-sm::placeholder {
+    color: #6b7280;
+}
+
+[data-theme='dark'] .ui-progress {
+    background-color: #374151;
+}
+
+[data-theme='dark'] .ui-td {
+    color: #d1d5db;
+}
+
+[data-theme='dark'] .ui-btn-table {
+    color: #93c5fd;
+}
+
+[data-theme='dark'] .ui-btn-table-danger {
+    color: #fda4af;
+}
+
+[data-theme='dark'] .ui-btn-table-muted {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .ui-btn-table:hover,
+[data-theme='dark'] .ui-btn-table-muted:hover {
+    background-color: rgb(28 100 242 / 0.22);
+    color: #bfdbfe;
+}
+
+[data-theme='dark'] .ui-btn-table-danger:hover {
+    background-color: rgb(244 63 94 / 0.18);
+    color: #fecdd3;
+}
+
+[data-theme='dark'] .ui-empty {
+    background-color: #18202b;
+    border-color: #4b5563;
+}
+
+[data-theme='dark'] .ui-skeleton {
+    background-color: #374151;
+}
+
+[data-theme='dark'] .ui-skeleton::before {
+    background-image: linear-gradient(90deg, transparent, rgb(55 65 81 / 0.6), transparent);
+}
+
+/* Gradien latar halaman auth: di mode gelap dibalik ke nada biru-tua. */
+[data-theme='dark'] .auth-shell {
+    background-image: linear-gradient(to bottom right, #111827, #1f2937, #172554);
+}
+[data-theme='dark'] .ui-nav-link:hover,
+[data-theme='dark'] .ui-btn-ghost:hover,
+[data-theme='dark'] .ui-btn-secondary:hover {
+    background-color: #374151;
+    color: #f3f4f6;
+}
+
+/* Ikon chevron pada kartu yang bisa diklik: menyala saat kartunya di-hover. */
+[data-theme='dark'] [class*='group-hover:text-gray-500']:hover {
+    color: #d1d5db;
+}
+
+/* ---------- Ikon tombol tema ---------- */
+/* Mode terang menampilkan bulan (aksi: beralih ke gelap), dan sebaliknya. */
+.theme-moon {
+    display: none;
+}
+
+[data-theme='dark'] .theme-sun {
+    display: none;
+}
+
+[data-theme='dark'] .theme-moon {
+    display: block;
+}
+
+/* ---------- Navigasi mobile ---------- */
+#mobile-menu[data-state='closed'] {
+    pointer-events: none;
+    visibility: hidden;
+}
+
+#mobile-menu[data-state='open'] {
+    visibility: visible;
+}
+
+/* ---------- Sidebar ringkas ---------- */
+[data-sidebar='collapsed'] .app-sidebar {
+    width: 5rem;
+}
+
+/* Ruang logo mengecil, jadi logo dan tombol ringkas ditumpuk vertikal. */
+[data-sidebar='collapsed'] .app-sidebar-head {
+    height: auto;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 0.5rem;
+}
+
+[data-sidebar='collapsed'] .app-sidebar nav,
+[data-sidebar='collapsed'] .app-sidebar footer {
+    padding-inline: 0.5rem;
+}
+
+[data-sidebar='collapsed'] .app-sidebar .ui-nav-link,
+[data-sidebar='collapsed'] .app-sidebar .sidebar-row {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+/* Label panjang disembunyikan; ikonnya tetap jadi penanda. */
+[data-sidebar='collapsed'] .app-sidebar .sidebar-label,
+[data-sidebar='collapsed'] .app-sidebar .ui-eyebrow {
+    display: none;
+}
+
+[data-sidebar='collapsed'] .sidebar-toggle-icon {
+    transform: none;
+}
+
+/* Default mengarah ke kiri (aksi: ringkas), terbalik saat sudah ringkas. */
+.app-sidebar .sidebar-toggle-icon {
+    transform: rotate(180deg);
+    transition: transform 200ms ease-out;
+}
+
+/* Jangan ringkas sidebar di layar kecil — drawer mobile yang dipakai. */
+@media (max-width: 1023px) {
+    .sidebar-toggle {
+        display: none;
+    }
+}
+
+@media (min-width: 1024px) {
+    [data-sidebar='collapsed'] .app-shell {
+        padding-left: 5rem;
+    }
+}
+
+/* ---------- Progres AI ---------- */
+
+@keyframes ai-sweep {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+@keyframes ai-halo {
+    0% {
+        opacity: 0.55;
+        transform: scale(1);
+    }
+    70%,
+    100% {
+        opacity: 0;
+        transform: scale(1.45);
+    }
+}
+
+@keyframes ai-dot {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/*
+ * Denyut dan sapuan dimatikan kalau OS meminta gerak minim. Bilah tetap
+ * berjalan karena transisi lebar bukan animasi berulang, dan itu satu-satunya
+ * tanda proses masih hidup.
+ */
+@media (prefers-reduced-motion: reduce) {
+    .ai-halo,
+    .ai-dot-live,
+    .ai-bar,
+    .ui-toast,
+    .ui-toast-out,
+    .ui-skeleton::before {
+        animation: none;
+    }
+}
